@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_horizontal_padding"
+        android:paddingTop="@dimen/section_spacing"
+        android:paddingBottom="@dimen/section_spacing_large">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_badge_child"
+            android:paddingHorizontal="@dimen/badge_horizontal_padding"
+            android:paddingVertical="@dimen/badge_vertical_padding"
+            android:text="@string/child_profile_badge"
+            android:textAppearance="@style/TextAppearance.HOME_App.Badge"
+            android:textColor="@color/child_accent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing"
+            android:text="@string/profile_body"
+            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.HOME_App.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/section_spacing">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding_large">
+
+                <TextView
+                    android:id="@+id/text_profile_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.HOME_App.ScreenTitle" />
+
+                <TextView
+                    android:id="@+id/text_profile_family"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_small"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Body" />
+
+                <TextView
+                    android:id="@+id/text_profile_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_small"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+
+                <TextView
+                    android:id="@+id/text_profile_points"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_small"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+
+                <TextView
+                    android:id="@+id/text_profile_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_xsmall"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.HOME_App.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding_large">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/profile_card_title"
+                    android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_small"
+                    android:text="@string/profile_card_body"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_sign_out"
+            style="@style/Widget.HOME_App.Button.Text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/section_spacing"
+            android:text="@string/action_sign_out" />
+    </LinearLayout>
+</ScrollView>

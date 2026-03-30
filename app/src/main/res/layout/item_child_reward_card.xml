@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.HOME_App.Card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/stack_spacing">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/card_padding_large">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_child_reward_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
+
+            <TextView
+                android:id="@+id/text_child_reward_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/chip_horizontal_padding"
+                android:paddingVertical="@dimen/chip_vertical_padding"
+                android:textAppearance="@style/TextAppearance.HOME_App.Badge" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_child_reward_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing_small"
+            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
+
+        <TextView
+            android:id="@+id/text_child_reward_highlight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/input_spacing"
+            android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+
+        <TextView
+            android:id="@+id/text_child_reward_cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing_xsmall"
+            android:textAppearance="@style/TextAppearance.HOME_App.Badge"
+            android:textColor="@color/child_accent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_child_reward_open"
+            style="@style/Widget.HOME_App.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing"
+            android:text="@string/action_view_reward_details" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

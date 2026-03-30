@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_horizontal_padding"
+        android:paddingTop="@dimen/section_spacing"
+        android:paddingBottom="@dimen/section_spacing_large">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/child_chores_body"
+            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.HOME_App.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/section_spacing">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding_large">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/child_chores_section_title"
+                    android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
+
+                <TextView
+                    android:id="@+id/text_child_chores_summary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_small"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:id="@+id/container_child_chores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing"
+            android:orientation="vertical" />
+
+        <TextView
+            android:id="@+id/text_child_chores_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing"
+            android:gravity="center_horizontal"
+            android:text="@string/child_chores_empty"
+            android:textAppearance="@style/TextAppearance.HOME_App.Supporting"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_nav_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.example.hom_e_app.feature.shared.SplashFragment"
+        android:label="@string/title_splash" />
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.hom_e_app.feature.auth.LoginFragment"
+        android:label="@string/title_login" />
+
+    <fragment
+        android:id="@+id/registerJoinFamilyFragment"
+        android:name="com.example.hom_e_app.feature.auth.RegisterJoinFamilyFragment"
+        android:label="@string/title_register_join" />
+
+    <fragment
+        android:id="@+id/parentHomeFragment"
+        android:name="com.example.hom_e_app.feature.parent.home.ParentHomeFragment"
+        android:label="@string/title_parent_home" />
+
+    <fragment
+        android:id="@+id/parentChoresFragment"
+        android:name="com.example.hom_e_app.feature.parent.chores.ParentChoresFragment"
+        android:label="@string/title_parent_chores" />
+
+    <fragment
+        android:id="@+id/parentRewardsFragment"
+        android:name="com.example.hom_e_app.feature.parent.rewards.ParentRewardsFragment"
+        android:label="@string/title_parent_rewards" />
+
+    <fragment
+        android:id="@+id/createEditChoreFragment"
+        android:name="com.example.hom_e_app.feature.parent.chores.CreateEditChoreFragment"
+        android:label="@string/title_create_edit_chore" />
+
+    <fragment
+        android:id="@+id/approvalsFragment"
+        android:name="com.example.hom_e_app.feature.parent.chores.ApprovalsFragment"
+        android:label="@string/title_approvals" />
+
+    <fragment
+        android:id="@+id/createEditRewardFragment"
+        android:name="com.example.hom_e_app.feature.parent.rewards.CreateEditRewardFragment"
+        android:label="@string/title_create_edit_reward" />
+
+    <fragment
+        android:id="@+id/childHomeFragment"
+        android:name="com.example.hom_e_app.feature.child.home.ChildHomeFragment"
+        android:label="@string/title_child_home" />
+
+    <fragment
+        android:id="@+id/childChoresFragment"
+        android:name="com.example.hom_e_app.feature.child.chores.ChildChoresFragment"
+        android:label="@string/title_child_chores" />
+
+    <fragment
+        android:id="@+id/childRewardsFragment"
+        android:name="com.example.hom_e_app.feature.child.rewards.ChildRewardsFragment"
+        android:label="@string/title_child_rewards" />
+
+    <fragment
+        android:id="@+id/choreDetailsFragment"
+        android:name="com.example.hom_e_app.feature.child.chores.ChoreDetailsFragment"
+        android:label="@string/title_chore_details" />
+
+    <fragment
+        android:id="@+id/rewardDetailsFragment"
+        android:name="com.example.hom_e_app.feature.child.rewards.RewardDetailsFragment"
+        android:label="@string/title_reward_details" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.hom_e_app.feature.child.profile.ProfileFragment"
+        android:label="@string/title_profile" />
+
+</navigation>

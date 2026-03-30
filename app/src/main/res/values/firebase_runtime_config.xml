@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="firebase_runtime_application_id" translatable="false"></string>
+    <string name="firebase_runtime_api_key" translatable="false"></string>
+    <string name="firebase_runtime_project_id" translatable="false"></string>
+    <string name="firebase_runtime_sender_id" translatable="false"></string>
+    <string name="firebase_runtime_storage_bucket" translatable="false"></string>
+    <string name="firebase_runtime_database_url" translatable="false"></string>
+</resources>

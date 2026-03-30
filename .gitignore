@@ -20,6 +20,9 @@ Thumbs.db
 *.jks
 *.keystore
 keystore.properties
+app/google-services.json
+serviceAccount*.json
+firebase-adminsdk*.json
 
 # Generated app artifacts
 *.apk

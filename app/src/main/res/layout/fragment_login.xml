@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/screen_horizontal_padding"
+        android:paddingTop="@dimen/section_spacing_large"
+        android:paddingBottom="@dimen/section_spacing">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_badge_parent"
+            android:paddingHorizontal="@dimen/badge_horizontal_padding"
+            android:paddingVertical="@dimen/badge_vertical_padding"
+            android:text="@string/login_badge"
+            android:textAppearance="@style/TextAppearance.HOME_App.Badge"
+            android:textColor="@color/parent_accent" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing"
+            android:text="@string/login_title"
+            android:textAppearance="@style/TextAppearance.HOME_App.ScreenTitle" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/stack_spacing_small"
+            android:text="@string/login_body"
+            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.HOME_App.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/section_spacing">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding_large">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_form_title"
+                    android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
+
+                <TextView
+                    android:id="@+id/text_login_form_helper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_xsmall"
+                    android:text="@string/login_form_helper"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/input_layout_login_email"
+                    style="@style/Widget.HOME_App.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/input_spacing"
+                    android:hint="@string/hint_email"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_login_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/input_layout_login_password"
+                    style="@style/Widget.HOME_App.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/input_spacing"
+                    android:hint="@string/hint_password"
+                    app:endIconMode="password_toggle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/input_login_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progress_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/input_spacing"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/text_login_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_small"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/text_login_demo_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/input_spacing"
+                    android:text="@string/login_demo_note"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_login_continue"
+                    style="@style/Widget.HOME_App.Button.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/section_spacing"
+                    android:text="@string/action_sign_in" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.HOME_App.Card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/section_spacing">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/card_padding">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_register_prompt"
+                    android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing_small"
+                    android:text="@string/login_register_body"
+                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_join_family"
+                    style="@style/Widget.HOME_App.Button.Secondary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/stack_spacing"
+                    android:text="@string/action_open_register_join" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

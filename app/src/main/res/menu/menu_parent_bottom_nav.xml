@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/parentHomeFragment"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="@string/nav_home" />
+    <item
+        android:id="@+id/parentChoresFragment"
+        android:icon="@android:drawable/ic_menu_agenda"
+        android:title="@string/nav_chores" />
+    <item
+        android:id="@+id/parentRewardsFragment"
+        android:icon="@android:drawable/btn_star_big_on"
+        android:title="@string/nav_rewards" />
+</menu>

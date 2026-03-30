@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black">#1E1B18</color>
+    <color name="white">#FFFFFF</color>
+    <color name="home_background">#F7F4EF</color>
+    <color name="home_surface">#FFFDFC</color>
+    <color name="home_surface_variant">#EFE7DD</color>
+    <color name="home_surface_accent">#E7EFEA</color>
+    <color name="home_outline">#D6C8B8</color>
+    <color name="home_primary">#396A58</color>
+    <color name="home_on_primary">#FFFFFF</color>
+    <color name="home_secondary">#7B6753</color>
+    <color name="home_on_surface">#241F1A</color>
+    <color name="home_helper">#61564B</color>
+    <color name="home_error">#B3261E</color>
+    <color name="parent_accent">#A55A2A</color>
+    <color name="parent_badge_background">#F7E2D2</color>
+    <color name="parent_surface_tint">#F4ECE4</color>
+    <color name="parent_metric_background">#FFF4EB</color>
+    <color name="status_attention_background">#FDECCE</color>
+    <color name="status_attention_text">#8A4A11</color>
+    <color name="status_positive_background">#DDEFE4</color>
+    <color name="status_positive_text">#24553E</color>
+    <color name="status_neutral_background">#ECE7E1</color>
+    <color name="status_neutral_text">#5B5046</color>
+    <color name="status_negative_background">#F7DCDC</color>
+    <color name="status_negative_text">#8B2E2B</color>
+    <color name="child_accent">#2E6E8C</color>
+    <color name="child_badge_background">#DCEFF8</color>
+    <color name="child_metric_background">#EAF6FB</color>
+    <color name="bottom_nav_item_unselected">#5B5046</color>
 </resources>

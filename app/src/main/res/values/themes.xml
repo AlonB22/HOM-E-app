@@ -1,9 +1,87 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.HOME_App" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/home_primary</item>
+        <item name="colorOnPrimary">@color/home_on_primary</item>
+        <item name="colorSecondary">@color/home_secondary</item>
+        <item name="colorSurface">@color/home_surface</item>
+        <item name="colorSurfaceContainer">@color/home_surface_variant</item>
+        <item name="colorOutline">@color/home_outline</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/home_surface</item>
+        <item name="materialCardViewStyle">@style/Widget.HOME_App.Card</item>
+        <item name="materialButtonStyle">@style/Widget.HOME_App.Button.Secondary</item>
     </style>
 
     <style name="Theme.HOME_App" parent="Base.Theme.HOME_App" />
+
+    <style name="Widget.HOME_App.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/home_surface</item>
+        <item name="strokeColor">@color/home_outline</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <style name="Widget.HOME_App.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/home_primary</item>
+        <item name="android:textColor">@color/home_on_primary</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <style name="Widget.HOME_App.Button.Secondary" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/home_outline</item>
+        <item name="android:textColor">@color/home_on_surface</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <style name="Widget.HOME_App.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/home_primary</item>
+    </style>
+
+    <style name="Widget.HOME_App.Button.Toggle" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <style name="Widget.HOME_App.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/home_surface</item>
+        <item name="boxStrokeColor">@color/home_outline</item>
+        <item name="hintTextColor">@color/home_helper</item>
+        <item name="errorTextColor">@color/home_error</item>
+        <item name="boxCornerRadiusTopStart">18dp</item>
+        <item name="boxCornerRadiusTopEnd">18dp</item>
+        <item name="boxCornerRadiusBottomStart">18dp</item>
+        <item name="boxCornerRadiusBottomEnd">18dp</item>
+    </style>
+
+    <style name="TextAppearance.HOME_App.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/home_on_surface</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.HOME_App.HeroTitle" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:textColor">@color/home_on_surface</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.HOME_App.ScreenTitle" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/home_on_surface</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.HOME_App.CardTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/home_on_surface</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.HOME_App.Body" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/home_on_surface</item>
+    </style>
+
+    <style name="TextAppearance.HOME_App.Supporting" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/home_helper</item>
+    </style>
+
+    <style name="TextAppearance.HOME_App.Badge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
