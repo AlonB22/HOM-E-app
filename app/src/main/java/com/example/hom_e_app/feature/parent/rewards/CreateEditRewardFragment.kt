@@ -2,17 +2,24 @@ package com.example.hom_e_app.feature.parent.rewards
 
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import com.example.hom_e_app.R
+import com.example.hom_e_app.core.auth.SessionManager
+import com.example.hom_e_app.core.data.FirestoreFeatureRepository
+import com.example.hom_e_app.core.data.ParentRewardDraft
+import com.example.hom_e_app.core.data.ParentRewardForm
 import com.example.hom_e_app.core.ui.BaseFragment
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 
 class CreateEditRewardFragment : BaseFragment(R.layout.fragment_create_edit_reward) {
 
     companion object {
         const val ARG_FORM_MODE = "parent_reward_form_mode"
+        const val ARG_REWARD_ID = "parent_reward_id"
         const val ARG_TITLE = "parent_reward_title"
         const val ARG_DESCRIPTION = "parent_reward_description"
         const val ARG_POINTS = "parent_reward_points"
@@ -22,24 +29,24 @@ class CreateEditRewardFragment : BaseFragment(R.layout.fragment_create_edit_rewa
         const val MODE_EDIT = "edit"
     }
 
+    private var isSaving = false
+
     override fun bindScreenActions() {
         bindBack(R.id.button_cancel_reward)
 
-        val titleLayout = requireView().findViewById<TextInputLayout>(R.id.input_layout_reward_title)
-        val titleInput = requireView().findViewById<TextInputEditText>(R.id.edit_text_reward_title)
-        val descriptionLayout =
-            requireView().findViewById<TextInputLayout>(R.id.input_layout_reward_description)
-        val descriptionInput =
-            requireView().findViewById<TextInputEditText>(R.id.edit_text_reward_description)
-        val pointsLayout =
-            requireView().findViewById<TextInputLayout>(R.id.input_layout_reward_points)
-        val pointsInput =
-            requireView().findViewById<TextInputEditText>(R.id.edit_text_reward_points)
-        val activeSwitch = requireView().findViewById<MaterialSwitch>(R.id.switch_reward_active)
-        val previewText = requireView().findViewById<TextView>(R.id.text_reward_preview)
-        val formTitle = requireView().findViewById<TextView>(R.id.text_reward_form_title)
-        val formMode = requireView().findViewById<TextView>(R.id.text_reward_form_mode)
-        val formSubtitle = requireView().findViewById<TextView>(R.id.text_reward_form_subtitle)
+        val root = requireView()
+        val titleLayout = root.findViewById<TextInputLayout>(R.id.input_layout_reward_title)
+        val titleInput = root.findViewById<TextInputEditText>(R.id.edit_text_reward_title)
+        val descriptionLayout = root.findViewById<TextInputLayout>(R.id.input_layout_reward_description)
+        val descriptionInput = root.findViewById<TextInputEditText>(R.id.edit_text_reward_description)
+        val pointsLayout = root.findViewById<TextInputLayout>(R.id.input_layout_reward_points)
+        val pointsInput = root.findViewById<TextInputEditText>(R.id.edit_text_reward_points)
+        val activeSwitch = root.findViewById<MaterialSwitch>(R.id.switch_reward_active)
+        val previewText = root.findViewById<TextView>(R.id.text_reward_preview)
+        val formTitle = root.findViewById<TextView>(R.id.text_reward_form_title)
+        val formMode = root.findViewById<TextView>(R.id.text_reward_form_mode)
+        val formSubtitle = root.findViewById<TextView>(R.id.text_reward_form_subtitle)
+        val saveButton = root.findViewById<android.view.View>(R.id.button_save_reward)
 
         val isEditMode = arguments?.getString(ARG_FORM_MODE) == MODE_EDIT
         if (isEditMode) {
@@ -61,7 +68,9 @@ class CreateEditRewardFragment : BaseFragment(R.layout.fragment_create_edit_rewa
         descriptionInput.doAfterTextChanged { descriptionLayout.error = null }
         pointsInput.doAfterTextChanged { pointsLayout.error = null }
 
-        requireView().findViewById<android.view.View>(R.id.button_save_reward).setOnClickListener {
+        saveButton.setOnClickListener {
+            if (isSaving) return@setOnClickListener
+
             val title = titleInput.text?.toString()?.trim().orEmpty()
             val description = descriptionInput.text?.toString()?.trim().orEmpty()
             val points = pointsInput.text?.toString()?.trim()?.toIntOrNull()
@@ -99,10 +108,79 @@ class CreateEditRewardFragment : BaseFragment(R.layout.fragment_create_edit_rewa
             } else {
                 getString(R.string.label_status_inactive)
             }
-
             previewText.text = getString(R.string.message_reward_preview, title, points, availability)
-            Snackbar.make(requireView(), R.string.message_reward_saved_local, Snackbar.LENGTH_SHORT)
-                .show()
+
+            val session = SessionManager.currentSession ?: return@setOnClickListener
+            val draft = ParentRewardDraft(
+                title = title,
+                description = description,
+                cost = points!!,
+                isActive = activeSwitch.isChecked,
+            )
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                setSavingState(true, saveButton)
+                val result = if (isEditMode) {
+                    FirestoreFeatureRepository.updateParentReward(
+                        requireContext(),
+                        session,
+                        currentRewardId(),
+                        draft,
+                    )
+                } else {
+                    FirestoreFeatureRepository.createParentReward(requireContext(), session, draft)
+                }
+                setSavingState(false, saveButton)
+
+                result.onSuccess {
+                    Snackbar.make(
+                        requireView(),
+                        getString(
+                            if (isEditMode) {
+                                R.string.message_reward_updated
+                            } else {
+                                R.string.message_reward_created
+                            }
+                        ),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }.onFailure {
+                    Snackbar.make(requireView(), SessionManager.errorMessage(it), Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        if (isEditMode) {
+            loadRewardForEdit()
         }
     }
+
+    private fun loadRewardForEdit() {
+        val session = SessionManager.currentSession ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            FirestoreFeatureRepository.loadParentRewardForm(requireContext(), session, currentRewardId())
+                .onSuccess(::bindExistingReward)
+                .onFailure {
+                    Snackbar.make(requireView(), SessionManager.errorMessage(it), Snackbar.LENGTH_LONG).show()
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+        }
+    }
+
+    private fun bindExistingReward(reward: ParentRewardForm) {
+        val root = requireView()
+        root.findViewById<TextInputEditText>(R.id.edit_text_reward_title).setText(reward.title)
+        root.findViewById<TextInputEditText>(R.id.edit_text_reward_description).setText(reward.description)
+        root.findViewById<TextInputEditText>(R.id.edit_text_reward_points).setText(reward.cost.toString())
+        root.findViewById<MaterialSwitch>(R.id.switch_reward_active).isChecked = reward.isActive
+    }
+
+    private fun setSavingState(isSaving: Boolean, saveButton: android.view.View) {
+        this.isSaving = isSaving
+        saveButton.isEnabled = !isSaving
+    }
+
+    private fun currentRewardId(): String =
+        arguments?.getString(ARG_REWARD_ID) ?: error("Missing reward ID for edit mode.")
 }

@@ -47,6 +47,7 @@
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
                 <TextView
+                    android:id="@+id/text_parent_overview_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/stack_spacing_small"
@@ -73,6 +74,7 @@
                             android:padding="@dimen/card_padding">
 
                             <TextView
+                                android:id="@+id/text_parent_metric_pending_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/parent_home_metric_pending_value"
@@ -106,6 +108,7 @@
                             android:padding="@dimen/card_padding">
 
                             <TextView
+                                android:id="@+id/text_parent_metric_active_chores_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/parent_home_metric_active_chores_value"
@@ -139,6 +142,7 @@
                             android:padding="@dimen/card_padding">
 
                             <TextView
+                                android:id="@+id/text_parent_metric_rewards_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/parent_home_metric_rewards_value"
@@ -176,6 +180,7 @@
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
                 <TextView
+                    android:id="@+id/text_parent_focus_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/stack_spacing_small"
@@ -183,6 +188,7 @@
                     android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
 
                 <TextView
+                    android:id="@+id/text_parent_focus_chip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/stack_spacing"
@@ -369,6 +375,7 @@
                     android:textAppearance="@style/TextAppearance.HOME_App.Body" />
 
                 <TextView
+                    android:id="@+id/text_parent_family_pulse_body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/stack_spacing_xsmall"

@@ -29,3 +29,8 @@ firebase-adminsdk*.json
 *.aab
 *.ap_
 *.hprof
+
+# Node / Firebase emulator tooling
+node_modules/
+firebase-debug.log
+firestore-debug.log

@@ -1,0 +1,482 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDocPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    function familyDocPath(familyId) {
+      return /databases/$(database)/documents/families/$(familyId);
+    }
+
+    function memberDocPath(memberId) {
+      return /databases/$(database)/documents/familyMembers/$(memberId);
+    }
+
+    function rewardDocPath(rewardId) {
+      return /databases/$(database)/documents/rewards/$(rewardId);
+    }
+
+    function validRole(role) {
+      return role == 'parent' || role == 'child';
+    }
+
+    function validChoreStatus(status) {
+      return status == 'open'
+        || status == 'submitted'
+        || status == 'approved'
+        || status == 'rejected';
+    }
+
+    function validRewardRequestStatus(status) {
+      return status == 'requested'
+        || status == 'approved'
+        || status == 'rejected';
+    }
+
+    function hasUserProfile() {
+      return signedIn() && exists(userDocPath(request.auth.uid));
+    }
+
+    function userProfile() {
+      return get(userDocPath(request.auth.uid));
+    }
+
+    function hasAuthoritativeMembership() {
+      return hasUserProfile()
+        && userProfile().data.memberId is string
+        && exists(memberDocPath(userProfile().data.memberId))
+        && get(memberDocPath(userProfile().data.memberId)).data.userId == request.auth.uid;
+    }
+
+    function myMember() {
+      return get(memberDocPath(userProfile().data.memberId));
+    }
+
+    function myMemberId() {
+      return userProfile().data.memberId;
+    }
+
+    function myFamilyId() {
+      return myMember().data.familyId;
+    }
+
+    function myRole() {
+      return myMember().data.role;
+    }
+
+    function isParentOfFamily(familyId) {
+      return hasAuthoritativeMembership()
+        && myRole() == 'parent'
+        && myFamilyId() == familyId;
+    }
+
+    function isChildOfFamily(familyId) {
+      return hasAuthoritativeMembership()
+        && myRole() == 'child'
+        && myFamilyId() == familyId;
+    }
+
+    function isOwnMember(memberId) {
+      return hasAuthoritativeMembership() && myMemberId() == memberId;
+    }
+
+    function isReadableFamilyMember(memberId, familyId) {
+      return isOwnMember(memberId) || isParentOfFamily(familyId);
+    }
+
+    function isChildMember(memberId, familyId) {
+      return exists(memberDocPath(memberId))
+        && get(memberDocPath(memberId)).data.familyId == familyId
+        && get(memberDocPath(memberId)).data.role == 'child';
+    }
+
+    function validUserBootstrap(uid, role, familyId, memberId) {
+      let memberAfter = getAfter(memberDocPath(memberId));
+      return memberAfter.data.userId == uid
+        && memberAfter.data.role == role
+        && memberAfter.data.familyId == familyId
+        && (
+          role == 'parent'
+            ? getAfter(familyDocPath(familyId)).data.createdByUid == uid
+            : get(familyDocPath(familyId)).data.joinCode == memberAfter.data.joinCodeUsed
+        );
+    }
+
+    function validParentMembershipCreate(memberId) {
+      let familyId = request.resource.data.familyId;
+      return request.resource.data.userId == request.auth.uid
+        && request.resource.data.role == 'parent'
+        && request.resource.data.displayName is string
+        && request.resource.data.email is string
+        && (!request.resource.data.keys().hasAny(['pointsBalance']) || request.resource.data.pointsBalance == 0)
+        && existsAfter(userDocPath(request.auth.uid))
+        && getAfter(userDocPath(request.auth.uid)).data.memberId == memberId
+        && getAfter(userDocPath(request.auth.uid)).data.familyId == familyId
+        && getAfter(userDocPath(request.auth.uid)).data.role == 'parent'
+        && existsAfter(familyDocPath(familyId))
+        && getAfter(familyDocPath(familyId)).data.createdByUid == request.auth.uid;
+    }
+
+    function validChildMembershipCreate(memberId) {
+      let familyId = request.resource.data.familyId;
+      return request.resource.data.userId == request.auth.uid
+        && request.resource.data.role == 'child'
+        && request.resource.data.displayName is string
+        && request.resource.data.email is string
+        && request.resource.data.joinCodeUsed is string
+        && (!request.resource.data.keys().hasAny(['pointsBalance']) || request.resource.data.pointsBalance == 0)
+        && exists(familyDocPath(familyId))
+        && get(familyDocPath(familyId)).data.joinCode == request.resource.data.joinCodeUsed
+        && existsAfter(userDocPath(request.auth.uid))
+        && getAfter(userDocPath(request.auth.uid)).data.memberId == memberId
+        && getAfter(userDocPath(request.auth.uid)).data.familyId == familyId
+        && getAfter(userDocPath(request.auth.uid)).data.role == 'child';
+    }
+
+    function choreReadAllowed() {
+      return isParentOfFamily(resource.data.familyId)
+        || (
+          isChildOfFamily(resource.data.familyId)
+          && resource.data.assigneeMemberId == myMemberId()
+        );
+    }
+
+    function rewardReadAllowed() {
+      return isParentOfFamily(resource.data.familyId)
+        || (
+          isChildOfFamily(resource.data.familyId)
+          && resource.data.isActive == true
+        );
+    }
+
+    function rewardRequestReadAllowed() {
+      return isParentOfFamily(resource.data.familyId)
+        || (
+          isChildOfFamily(resource.data.familyId)
+          && resource.data.requestedByMemberId == myMemberId()
+        );
+    }
+
+    function choreSubmitAllowed() {
+      return isChildOfFamily(resource.data.familyId)
+        && resource.data.assigneeMemberId == myMemberId()
+        && resource.data.status == 'open'
+        && request.resource.data.familyId == resource.data.familyId
+        && request.resource.data.title == resource.data.title
+        && request.resource.data.description == resource.data.description
+        && request.resource.data.focus == resource.data.focus
+        && request.resource.data.points == resource.data.points
+        && request.resource.data.assigneeMemberId == resource.data.assigneeMemberId
+        && request.resource.data.assigneeName == resource.data.assigneeName
+        && request.resource.data.createdByMemberId == resource.data.createdByMemberId
+        && request.resource.data.status == 'submitted'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status',
+          'submittedAt',
+          'updatedAt'
+        ]);
+    }
+
+    function choreParentEditAllowed() {
+      return isParentOfFamily(resource.data.familyId)
+        && resource.data.status == 'open'
+        && request.resource.data.familyId == resource.data.familyId
+        && request.resource.data.createdByMemberId == resource.data.createdByMemberId
+        && request.resource.data.status == 'open'
+        && request.resource.data.title is string
+        && request.resource.data.description is string
+        && request.resource.data.focus is string
+        && request.resource.data.points is int
+        && isChildMember(request.resource.data.assigneeMemberId, resource.data.familyId)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'title',
+          'description',
+          'focus',
+          'points',
+          'assigneeMemberId',
+          'assigneeName',
+          'updatedAt'
+        ]);
+    }
+
+    function choreReviewAllowed() {
+      let memberBefore = get(memberDocPath(resource.data.assigneeMemberId));
+      let memberAfter = getAfter(memberDocPath(resource.data.assigneeMemberId));
+      return isParentOfFamily(resource.data.familyId)
+        && resource.data.status == 'submitted'
+        && request.resource.data.familyId == resource.data.familyId
+        && request.resource.data.title == resource.data.title
+        && request.resource.data.description == resource.data.description
+        && request.resource.data.focus == resource.data.focus
+        && request.resource.data.points == resource.data.points
+        && request.resource.data.assigneeMemberId == resource.data.assigneeMemberId
+        && request.resource.data.assigneeName == resource.data.assigneeName
+        && request.resource.data.createdByMemberId == resource.data.createdByMemberId
+        && request.resource.data.reviewedByMemberId == myMemberId()
+        && (request.resource.data.status == 'approved' || request.resource.data.status == 'rejected')
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status',
+          'reviewedByMemberId',
+          'reviewedAt',
+          'updatedAt'
+        ])
+        && memberBefore.data.familyId == resource.data.familyId
+        && memberBefore.data.role == 'child'
+        && (
+          request.resource.data.status == 'approved'
+            ? memberAfter.data.pointsBalance == memberBefore.data.pointsBalance + resource.data.points
+            : memberAfter.data.pointsBalance == memberBefore.data.pointsBalance
+        );
+    }
+
+    function rewardRequestCreateAllowed() {
+      let reward = get(rewardDocPath(request.resource.data.rewardId));
+      return isChildOfFamily(request.resource.data.familyId)
+        && request.resource.data.familyId == myFamilyId()
+        && request.resource.data.requestedByMemberId == myMemberId()
+        && request.resource.data.requestedByUserId == request.auth.uid
+        && request.resource.data.requestedByName == myMember().data.displayName
+        && request.resource.data.status == 'requested'
+        && validRewardRequestStatus(request.resource.data.status)
+        && reward.data.familyId == request.resource.data.familyId
+        && reward.data.isActive == true
+        && request.resource.data.rewardTitle == reward.data.title
+        && request.resource.data.rewardDescription == reward.data.description
+        && request.resource.data.rewardHighlight == reward.data.highlight
+        && request.resource.data.rewardCost == reward.data.cost;
+    }
+
+    function rewardRequestReviewAllowed() {
+      let memberBefore = get(memberDocPath(resource.data.requestedByMemberId));
+      let memberAfter = getAfter(memberDocPath(resource.data.requestedByMemberId));
+      return isParentOfFamily(resource.data.familyId)
+        && resource.data.status == 'requested'
+        && request.resource.data.familyId == resource.data.familyId
+        && request.resource.data.rewardId == resource.data.rewardId
+        && request.resource.data.requestedByMemberId == resource.data.requestedByMemberId
+        && request.resource.data.requestedByUserId == resource.data.requestedByUserId
+        && request.resource.data.requestedByName == resource.data.requestedByName
+        && request.resource.data.rewardTitle == resource.data.rewardTitle
+        && request.resource.data.rewardDescription == resource.data.rewardDescription
+        && request.resource.data.rewardHighlight == resource.data.rewardHighlight
+        && request.resource.data.rewardCost == resource.data.rewardCost
+        && request.resource.data.reviewedByMemberId == myMemberId()
+        && (request.resource.data.status == 'approved' || request.resource.data.status == 'rejected')
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status',
+          'reviewedByMemberId',
+          'reviewedAt',
+          'updatedAt'
+        ])
+        && memberBefore.data.familyId == resource.data.familyId
+        && memberBefore.data.role == 'child'
+        && (
+          request.resource.data.status == 'approved'
+            ? memberBefore.data.pointsBalance >= resource.data.rewardCost
+              && memberAfter.data.pointsBalance == memberBefore.data.pointsBalance - resource.data.rewardCost
+            : memberAfter.data.pointsBalance == memberBefore.data.pointsBalance
+        );
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && !exists(userDocPath(uid))
+        && request.resource.data.keys().hasOnly([
+          'email',
+          'displayName',
+          'role',
+          'familyId',
+          'memberId',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.email is string
+        && request.resource.data.displayName is string
+        && request.resource.data.familyId is string
+        && request.resource.data.memberId is string
+        && validRole(request.resource.data.role)
+        && validUserBootstrap(
+          uid,
+          request.resource.data.role,
+          request.resource.data.familyId,
+          request.resource.data.memberId
+        );
+
+      allow update, delete: if false;
+    }
+
+    match /families/{familyId} {
+      allow read: if (hasAuthoritativeMembership() && myFamilyId() == familyId)
+        || (signedIn() && !hasUserProfile());
+
+      allow create: if signedIn()
+        && !hasUserProfile()
+        && request.resource.data.keys().hasOnly([
+          'name',
+          'joinCode',
+          'createdByUid',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.joinCode is string
+        && request.resource.data.createdByUid == request.auth.uid
+        && existsAfter(userDocPath(request.auth.uid))
+        && getAfter(userDocPath(request.auth.uid)).data.role == 'parent'
+        && getAfter(userDocPath(request.auth.uid)).data.familyId == familyId;
+
+      allow update, delete: if false;
+    }
+
+    match /familyMembers/{memberId} {
+      allow read: if isReadableFamilyMember(memberId, resource.data.familyId);
+
+      allow create: if signedIn()
+        && !hasUserProfile()
+        && request.resource.data.keys().hasOnly([
+          'userId',
+          'familyId',
+          'role',
+          'displayName',
+          'email',
+          'pointsBalance',
+          'joinCodeUsed',
+          'createdAt',
+          'updatedAt'
+        ])
+        && (
+          request.resource.data.role == 'parent'
+            ? validParentMembershipCreate(memberId)
+            : validChildMembershipCreate(memberId)
+        );
+
+      allow update: if isParentOfFamily(resource.data.familyId)
+        && resource.data.role == 'child'
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.familyId == resource.data.familyId
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.displayName == resource.data.displayName
+        && request.resource.data.email == resource.data.email
+        && (!resource.data.keys().hasAny(['joinCodeUsed']) || request.resource.data.joinCodeUsed == resource.data.joinCodeUsed)
+        && request.resource.data.pointsBalance is int
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'pointsBalance',
+          'updatedAt'
+        ]);
+
+      allow delete: if false;
+    }
+
+    match /chores/{choreId} {
+      allow read: if choreReadAllowed();
+
+      allow create: if hasAuthoritativeMembership()
+        && myRole() == 'parent'
+        && request.resource.data.keys().hasOnly([
+          'familyId',
+          'title',
+          'description',
+          'focus',
+          'points',
+          'assigneeMemberId',
+          'assigneeName',
+          'status',
+          'createdByMemberId',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.familyId == myFamilyId()
+        && request.resource.data.title is string
+        && request.resource.data.description is string
+        && request.resource.data.focus is string
+        && request.resource.data.points is int
+        && request.resource.data.status == 'open'
+        && request.resource.data.createdByMemberId == myMemberId()
+        && isChildMember(request.resource.data.assigneeMemberId, request.resource.data.familyId);
+
+      allow update: if choreSubmitAllowed()
+        || choreParentEditAllowed()
+        || choreReviewAllowed();
+
+      allow delete: if false;
+    }
+
+    match /rewards/{rewardId} {
+      allow read: if rewardReadAllowed();
+
+      allow create: if hasAuthoritativeMembership()
+        && myRole() == 'parent'
+        && request.resource.data.keys().hasOnly([
+          'familyId',
+          'title',
+          'description',
+          'highlight',
+          'cost',
+          'isActive',
+          'createdByMemberId',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.familyId == myFamilyId()
+        && request.resource.data.title is string
+        && request.resource.data.description is string
+        && request.resource.data.highlight is string
+        && request.resource.data.cost is int
+        && request.resource.data.isActive is bool
+        && request.resource.data.createdByMemberId == myMemberId();
+
+      allow update: if isParentOfFamily(resource.data.familyId)
+        && request.resource.data.familyId == resource.data.familyId
+        && request.resource.data.createdByMemberId == resource.data.createdByMemberId
+        && request.resource.data.title is string
+        && request.resource.data.description is string
+        && request.resource.data.highlight is string
+        && request.resource.data.cost is int
+        && request.resource.data.isActive is bool
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'title',
+          'description',
+          'highlight',
+          'cost',
+          'isActive',
+          'updatedAt'
+        ]);
+
+      allow delete: if false;
+    }
+
+    match /rewardRequests/{requestId} {
+      allow read: if rewardRequestReadAllowed();
+
+      allow create: if request.resource.data.keys().hasOnly([
+          'familyId',
+          'rewardId',
+          'requestedByMemberId',
+          'requestedByUserId',
+          'requestedByName',
+          'rewardTitle',
+          'rewardDescription',
+          'rewardHighlight',
+          'rewardCost',
+          'status',
+          'createdAt',
+          'updatedAt'
+        ])
+        && rewardRequestCreateAllowed();
+
+      allow update: if rewardRequestReviewAllowed();
+
+      allow delete: if false;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "hom-e-firestore-verification",
+  "private": true,
+  "scripts": {
+    "test:firestore-rules": "node firestore/scripts/run-firestore-rules-tests.cjs",
+    "backfill:member-id:dry-run": "node firestore/scripts/backfill-member-id.cjs",
+    "backfill:member-id": "node firestore/scripts/backfill-member-id.cjs --apply",
+    "verify:firestore-deploy": "npm run test:firestore-rules && npm run backfill:member-id:dry-run"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.0",
+    "firebase-admin": "13.7.0",
+    "firebase-tools": "15.12.0"
+  }
+}

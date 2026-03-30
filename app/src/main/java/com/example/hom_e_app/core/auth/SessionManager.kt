@@ -125,6 +125,7 @@ object SessionManager {
                                 "displayName" to parentName,
                                 "role" to FamilyRole.PARENT.name.lowercase(Locale.US),
                                 "familyId" to familyId,
+                                "memberId" to memberId,
                                 "createdAt" to FieldValue.serverTimestamp(),
                                 "updatedAt" to FieldValue.serverTimestamp(),
                             )
@@ -194,20 +195,21 @@ object SessionManager {
             return Result.failure(it)
         }
 
-        val familyResult = resolveFamilyByJoinCode(services.firestore, joinCode)
-        if (familyResult.isFailure) {
-            _sessionState.value = SessionState.SignedOut
-            return Result.failure(familyResult.exceptionOrNull()!!)
-        }
-        val familySnapshot = familyResult.getOrThrow()
-
         return runCatching {
             services.auth.createUserWithEmailAndPassword(email, password).await().user
                 ?: error("Registration completed without a Firebase user.")
         }.fold(
             onSuccess = { user ->
+                val familyResult = resolveFamilyByJoinCode(services.firestore, joinCode)
+                if (familyResult.isFailure) {
+                    cleanupFailedRegistration(services.auth, user)
+                    _sessionState.value = SessionState.SignedOut
+                    return@fold Result.failure(familyResult.exceptionOrNull()!!)
+                }
+                val familySnapshot = familyResult.getOrThrow()
                 val familyId = familySnapshot.id
                 val memberId = services.firestore.collection(FAMILY_MEMBERS_COLLECTION).document().id
+                val normalizedJoinCode = joinCode.uppercase(Locale.US)
 
                 val writeResult = runCatching {
                     services.firestore.runBatch { batch ->
@@ -218,6 +220,7 @@ object SessionManager {
                                 "displayName" to childName,
                                 "role" to FamilyRole.CHILD.name.lowercase(Locale.US),
                                 "familyId" to familyId,
+                                "memberId" to memberId,
                                 "createdAt" to FieldValue.serverTimestamp(),
                                 "updatedAt" to FieldValue.serverTimestamp(),
                             )
@@ -230,6 +233,7 @@ object SessionManager {
                                 "role" to FamilyRole.CHILD.name.lowercase(Locale.US),
                                 "displayName" to childName,
                                 "email" to email,
+                                "joinCodeUsed" to normalizedJoinCode,
                                 "createdAt" to FieldValue.serverTimestamp(),
                                 "updatedAt" to FieldValue.serverTimestamp(),
                             )

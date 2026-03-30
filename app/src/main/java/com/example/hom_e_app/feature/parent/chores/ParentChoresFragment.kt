@@ -69,6 +69,7 @@ class ParentChoresFragment : BaseFragment(R.layout.fragment_parent_chores) {
                     R.id.createEditChoreFragment,
                     Bundle().apply {
                         putString(CreateEditChoreFragment.ARG_FORM_MODE, CreateEditChoreFragment.MODE_EDIT)
+                        putString(CreateEditChoreFragment.ARG_CHORE_ID, chore.id)
                         putString(CreateEditChoreFragment.ARG_TITLE, chore.title)
                         putString(CreateEditChoreFragment.ARG_DESCRIPTION, chore.description)
                         putString(CreateEditChoreFragment.ARG_CHILD_NAME, chore.assigneeName)
@@ -76,6 +77,8 @@ class ParentChoresFragment : BaseFragment(R.layout.fragment_parent_chores) {
                     }
                 )
             }
+            itemView.findViewById<MaterialButton>(R.id.button_parent_chore_edit).isEnabled =
+                chore.status == ChoreStatus.OPEN
             container.addView(itemView)
         }
     }

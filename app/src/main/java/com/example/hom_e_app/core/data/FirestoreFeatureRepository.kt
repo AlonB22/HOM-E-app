@@ -17,6 +17,59 @@ object FirestoreFeatureRepository {
     private const val REWARDS_COLLECTION = "rewards"
     private const val REWARD_REQUESTS_COLLECTION = "rewardRequests"
 
+    suspend fun loadParentHomeSummary(
+        context: Context,
+        session: FamilySession,
+    ): Result<ParentHomeSummaryState> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can access the parent home." }
+        val db = firestore(context)
+
+        val familyMembers = db.collection(FAMILY_MEMBERS_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .get()
+            .await()
+            .documents
+
+        val childMembers = familyMembers.filter {
+            it.getString("role")?.lowercase(Locale.US) == FamilyRole.CHILD.name.lowercase(Locale.US)
+        }
+
+        val chores = db.collection(CHORES_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .get()
+            .await()
+            .documents
+            .mapNotNull(::toChore)
+
+        val rewards = db.collection(REWARDS_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .get()
+            .await()
+            .documents
+            .mapNotNull(::toReward)
+
+        val rewardRequests = db.collection(REWARD_REQUESTS_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .get()
+            .await()
+            .documents
+            .mapNotNull(::toRewardRequest)
+
+        val submittedChoreCount = chores.count { it.status == ChoreStatus.SUBMITTED }
+        val pendingRewardRequestCount = rewardRequests.count { it.status == RewardRequestStatus.REQUESTED }
+
+        ParentHomeSummaryState(
+            pendingApprovalsCount = submittedChoreCount + pendingRewardRequestCount,
+            activeChoresCount = chores.count { it.status == ChoreStatus.OPEN || it.status == ChoreStatus.SUBMITTED },
+            activeRewardsCount = rewards.count { it.isActive },
+            submittedChoreCount = submittedChoreCount,
+            pendingRewardRequestCount = pendingRewardRequestCount,
+            openChoresCount = chores.count { it.status == ChoreStatus.OPEN },
+            childCount = childMembers.size,
+            totalChildPoints = childMembers.sumOf { it.getLong("pointsBalance")?.toInt() ?: 0 },
+        )
+    }
+
     suspend fun loadParentChores(
         context: Context,
         session: FamilySession,
@@ -41,6 +94,197 @@ object FirestoreFeatureRepository {
             }
     }
 
+    suspend fun loadParentChoreForm(
+        context: Context,
+        session: FamilySession,
+        choreId: String,
+    ): Result<ParentChoreForm> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can edit chores." }
+        val snapshot = firestore(context).collection(CHORES_COLLECTION).document(choreId).get().await()
+        val chore = toChore(snapshot) ?: error("Chore not found.")
+        validateParentFamilyAccess(chore.familyId, session)
+        ParentChoreForm(
+            id = chore.id,
+            title = chore.title,
+            description = chore.description,
+            assigneeMemberId = chore.assigneeMemberId,
+            assigneeName = chore.assigneeName,
+            points = chore.points,
+            status = chore.status,
+        )
+    }
+
+    suspend fun loadAssignableChildren(
+        context: Context,
+        session: FamilySession,
+    ): Result<List<FamilyChildOption>> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can assign chores." }
+        firestore(context)
+            .collection(FAMILY_MEMBERS_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .whereEqualTo("role", FamilyRole.CHILD.name.lowercase(Locale.US))
+            .get()
+            .await()
+            .documents
+            .mapNotNull(::toFamilyChildOption)
+            .sortedBy { it.displayName.lowercase(Locale.US) }
+    }
+
+    suspend fun createParentChore(
+        context: Context,
+        session: FamilySession,
+        input: ParentChoreDraft,
+    ): Result<Unit> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can create chores." }
+        val db = firestore(context)
+        val assignee = readChildAssignee(db, session.familyId, input.assigneeMemberId)
+        db.collection(CHORES_COLLECTION)
+            .document()
+            .set(
+                mapOf(
+                    "familyId" to session.familyId,
+                    "title" to input.title,
+                    "description" to input.description,
+                    "focus" to input.description,
+                    "points" to input.points,
+                    "assigneeMemberId" to assignee.id,
+                    "assigneeName" to assignee.displayName,
+                    "status" to ChoreStatus.OPEN.rawValue,
+                    "createdByMemberId" to session.memberId,
+                    "createdAt" to FieldValue.serverTimestamp(),
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                )
+            )
+            .await()
+    }
+
+    suspend fun updateParentChore(
+        context: Context,
+        session: FamilySession,
+        choreId: String,
+        input: ParentChoreDraft,
+    ): Result<Unit> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can edit chores." }
+        val db = firestore(context)
+        db.runTransaction { transaction ->
+            val choreRef = db.collection(CHORES_COLLECTION).document(choreId)
+            val chore = toChore(transaction.get(choreRef)) ?: error("Chore not found.")
+            validateParentFamilyAccess(chore.familyId, session)
+            if (chore.status != ChoreStatus.OPEN) {
+                error("Only open chores can be edited.")
+            }
+
+            val assignee = readChildAssignee(transaction, db, session.familyId, input.assigneeMemberId)
+            transaction.update(
+                choreRef,
+                mapOf(
+                    "title" to input.title,
+                    "description" to input.description,
+                    "focus" to input.description,
+                    "points" to input.points,
+                    "assigneeMemberId" to assignee.id,
+                    "assigneeName" to assignee.displayName,
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                )
+            )
+            Unit
+        }.await()
+    }
+
+    suspend fun loadParentRewards(
+        context: Context,
+        session: FamilySession,
+    ): Result<List<ParentRewardListItem>> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can manage rewards." }
+        firestore(context)
+            .collection(REWARDS_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .get()
+            .await()
+            .documents
+            .mapNotNull(::toReward)
+            .sortedWith(compareByDescending<RewardRecord> { it.updatedAtMillis }.thenBy { it.title.lowercase(Locale.US) })
+            .map {
+                ParentRewardListItem(
+                    id = it.id,
+                    title = it.title,
+                    description = it.description,
+                    cost = it.cost,
+                    isActive = it.isActive,
+                )
+            }
+    }
+
+    suspend fun loadParentRewardForm(
+        context: Context,
+        session: FamilySession,
+        rewardId: String,
+    ): Result<ParentRewardForm> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can edit rewards." }
+        val snapshot = firestore(context).collection(REWARDS_COLLECTION).document(rewardId).get().await()
+        val reward = toReward(snapshot) ?: error("Reward not found.")
+        validateParentFamilyAccess(reward.familyId, session)
+        ParentRewardForm(
+            id = reward.id,
+            title = reward.title,
+            description = reward.description,
+            cost = reward.cost,
+            isActive = reward.isActive,
+        )
+    }
+
+    suspend fun createParentReward(
+        context: Context,
+        session: FamilySession,
+        input: ParentRewardDraft,
+    ): Result<Unit> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can create rewards." }
+        firestore(context)
+            .collection(REWARDS_COLLECTION)
+            .document()
+            .set(
+                mapOf(
+                    "familyId" to session.familyId,
+                    "title" to input.title,
+                    "description" to input.description,
+                    "highlight" to input.description,
+                    "cost" to input.cost,
+                    "isActive" to input.isActive,
+                    "createdByMemberId" to session.memberId,
+                    "createdAt" to FieldValue.serverTimestamp(),
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                )
+            )
+            .await()
+    }
+
+    suspend fun updateParentReward(
+        context: Context,
+        session: FamilySession,
+        rewardId: String,
+        input: ParentRewardDraft,
+    ): Result<Unit> = runCatching {
+        require(session.role == FamilyRole.PARENT) { "Only parents can edit rewards." }
+        val db = firestore(context)
+        db.runTransaction { transaction ->
+            val rewardRef = db.collection(REWARDS_COLLECTION).document(rewardId)
+            val reward = toReward(transaction.get(rewardRef)) ?: error("Reward not found.")
+            validateParentFamilyAccess(reward.familyId, session)
+            transaction.update(
+                rewardRef,
+                mapOf(
+                    "title" to input.title,
+                    "description" to input.description,
+                    "highlight" to input.description,
+                    "cost" to input.cost,
+                    "isActive" to input.isActive,
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                )
+            )
+            Unit
+        }.await()
+    }
+
     suspend fun loadChildChores(
         context: Context,
         session: FamilySession,
@@ -48,16 +292,88 @@ object FirestoreFeatureRepository {
         val chores = firestore(context)
             .collection(CHORES_COLLECTION)
             .whereEqualTo("familyId", session.familyId)
+            .whereEqualTo("assigneeMemberId", session.memberId)
             .get()
             .await()
             .documents
             .mapNotNull(::toChore)
-            .filter { it.assigneeMemberId == session.memberId }
             .sortedWith(compareByDescending<ChoreRecord> { it.updatedAtMillis }.thenBy { it.title.lowercase(Locale.US) })
 
         ChildChoresState(
             chores = chores.map(::toChildChoreItem),
             waitingCount = chores.count { it.status == ChoreStatus.SUBMITTED }
+        )
+    }
+
+    suspend fun loadChildHomeSummary(
+        context: Context,
+        session: FamilySession,
+    ): Result<ChildHomeSummaryState> = runCatching {
+        require(session.role == FamilyRole.CHILD) { "Only children can access the child home." }
+        val db = firestore(context)
+
+        val chores = db.collection(CHORES_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .whereEqualTo("assigneeMemberId", session.memberId)
+            .get()
+            .await()
+            .documents
+            .mapNotNull(::toChore)
+            .sortedWith(compareByDescending<ChoreRecord> { it.updatedAtMillis }.thenBy { it.title.lowercase(Locale.US) })
+
+        val rewards = db.collection(REWARDS_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .whereEqualTo("isActive", true)
+            .get()
+            .await()
+            .documents
+            .mapNotNull(::toReward)
+            .sortedWith(compareBy<RewardRecord> { it.cost }.thenBy { it.title.lowercase(Locale.US) })
+
+        val pendingRequests = db.collection(REWARD_REQUESTS_COLLECTION)
+            .whereEqualTo("familyId", session.familyId)
+            .whereEqualTo("requestedByMemberId", session.memberId)
+            .get()
+            .await()
+            .documents
+            .mapNotNull(::toRewardRequest)
+            .filter { it.status == RewardRequestStatus.REQUESTED }
+            .associateBy { it.rewardId }
+
+        val pointsBalance = readPointsBalance(db, session.memberId)
+        val previewRewards = rewards.take(2).map { reward ->
+            ChildRewardItem(
+                id = reward.id,
+                title = reward.title,
+                description = reward.description,
+                highlight = reward.highlight,
+                cost = reward.cost,
+                isRequested = pendingRequests.containsKey(reward.id),
+            )
+        }
+
+        ChildHomeSummaryState(
+            pointsBalance = pointsBalance,
+            waitingCount = chores.count { it.status == ChoreStatus.SUBMITTED },
+            priorityChores = chores
+                .filter { it.status == ChoreStatus.OPEN }
+                .take(3)
+                .map(::toChildChoreItem),
+            rewardPreview = previewRewards,
+            nextReward = rewards
+                .asSequence()
+                .filter { !pendingRequests.containsKey(it.id) }
+                .map { reward ->
+                    ChildRewardItem(
+                        id = reward.id,
+                        title = reward.title,
+                        description = reward.description,
+                        highlight = reward.highlight,
+                        cost = reward.cost,
+                        isRequested = false,
+                    )
+                }
+                .firstOrNull(),
         )
     }
 
@@ -113,11 +429,11 @@ object FirestoreFeatureRepository {
         val db = firestore(context)
         val rewards = db.collection(REWARDS_COLLECTION)
             .whereEqualTo("familyId", session.familyId)
+            .whereEqualTo("isActive", true)
             .get()
             .await()
             .documents
             .mapNotNull(::toReward)
-            .filter { it.isActive }
             .sortedBy { it.title.lowercase(Locale.US) }
 
         val pendingRequests = db.collection(REWARD_REQUESTS_COLLECTION)
@@ -421,6 +737,29 @@ object FirestoreFeatureRepository {
         ?.toInt()
         ?: 0
 
+    private suspend fun readChildAssignee(
+        db: FirebaseFirestore,
+        familyId: String,
+        memberId: String,
+    ): FamilyChildOption {
+        val snapshot = db.collection(FAMILY_MEMBERS_COLLECTION).document(memberId).get().await()
+        return toFamilyChildOption(snapshot)?.also {
+            require(it.familyId == familyId) { "This child belongs to a different family." }
+        } ?: error("Selected child no longer exists.")
+    }
+
+    private fun readChildAssignee(
+        transaction: com.google.firebase.firestore.Transaction,
+        db: FirebaseFirestore,
+        familyId: String,
+        memberId: String,
+    ): FamilyChildOption {
+        val snapshot = transaction.get(db.collection(FAMILY_MEMBERS_COLLECTION).document(memberId))
+        return toFamilyChildOption(snapshot)?.also {
+            require(it.familyId == familyId) { "This child belongs to a different family." }
+        } ?: error("Selected child no longer exists.")
+    }
+
     private fun firestore(context: Context): FirebaseFirestore {
         val app = FirebaseBootstrap.initialize(context).getOrThrow()
         return FirebaseFirestore.getInstance(app)
@@ -474,6 +813,7 @@ object FirestoreFeatureRepository {
                 ?: snapshot.getLong("pointsCost")?.toInt()
                 ?: 0,
             isActive = snapshot.getBoolean("isActive") ?: true,
+            updatedAtMillis = snapshot.getDate("updatedAt")?.time ?: 0L,
         )
     }
 
@@ -510,6 +850,22 @@ object FirestoreFeatureRepository {
         require(session.role == FamilyRole.PARENT) { "Only parents can review approvals." }
         require(familyId == session.familyId) { "This request belongs to a different family." }
     }
+
+    private fun toFamilyChildOption(snapshot: DocumentSnapshot): FamilyChildOption? {
+        val familyId = snapshot.getString("familyId") ?: return null
+        val role = snapshot.getString("role")?.lowercase(Locale.US) ?: return null
+        if (role != FamilyRole.CHILD.name.lowercase(Locale.US)) return null
+        val displayName = snapshot.getString("displayName")
+            ?.takeIf { it.isNotBlank() }
+            ?: snapshot.getString("email")
+            ?.takeIf { it.isNotBlank() }
+            ?: return null
+        return FamilyChildOption(
+            id = snapshot.id,
+            familyId = familyId,
+            displayName = displayName,
+        )
+    }
 }
 
 data class ParentChoreListItem(
@@ -521,9 +877,74 @@ data class ParentChoreListItem(
     val status: ChoreStatus,
 )
 
+data class ParentChoreForm(
+    val id: String,
+    val title: String,
+    val description: String,
+    val assigneeMemberId: String,
+    val assigneeName: String,
+    val points: Int,
+    val status: ChoreStatus,
+)
+
+data class ParentChoreDraft(
+    val title: String,
+    val description: String,
+    val assigneeMemberId: String,
+    val points: Int,
+)
+
+data class FamilyChildOption(
+    val id: String,
+    val familyId: String,
+    val displayName: String,
+)
+
+data class ParentRewardListItem(
+    val id: String,
+    val title: String,
+    val description: String,
+    val cost: Int,
+    val isActive: Boolean,
+)
+
+data class ParentRewardForm(
+    val id: String,
+    val title: String,
+    val description: String,
+    val cost: Int,
+    val isActive: Boolean,
+)
+
+data class ParentRewardDraft(
+    val title: String,
+    val description: String,
+    val cost: Int,
+    val isActive: Boolean,
+)
+
+data class ParentHomeSummaryState(
+    val pendingApprovalsCount: Int,
+    val activeChoresCount: Int,
+    val activeRewardsCount: Int,
+    val submittedChoreCount: Int,
+    val pendingRewardRequestCount: Int,
+    val openChoresCount: Int,
+    val childCount: Int,
+    val totalChildPoints: Int,
+)
+
 data class ChildChoresState(
     val chores: List<ChildChoreItem>,
     val waitingCount: Int,
+)
+
+data class ChildHomeSummaryState(
+    val pointsBalance: Int,
+    val waitingCount: Int,
+    val priorityChores: List<ChildChoreItem>,
+    val rewardPreview: List<ChildRewardItem>,
+    val nextReward: ChildRewardItem?,
 )
 
 data class ChildChoreItem(
@@ -629,6 +1050,7 @@ private data class RewardRecord(
     val highlight: String,
     val cost: Int,
     val isActive: Boolean,
+    val updatedAtMillis: Long,
 )
 
 private data class RewardRequestRecord(
