@@ -1,6 +1,8 @@
 # HOM-E
 
-![HOM-E logo](logo.png)
+<p align="center">
+  <img src="logo.png" alt="HOM-E logo" width="220">
+</p>
 
 HOM-E is an Android family chores app built for a course final project. It focuses on a clear parent-child workflow:
 
