@@ -2,7 +2,6 @@ package com.example.hom_e_app.feature.child.rewards
 
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.example.hom_e_app.R
 import com.example.hom_e_app.core.auth.SessionManager
@@ -62,7 +61,6 @@ class RewardDetailsFragment : BaseFragment(R.layout.fragment_reward_details) {
         root.findViewById<TextView>(R.id.text_reward_detail_cost).text =
             getString(R.string.label_cost_value, reward.cost)
         root.findViewById<TextView>(R.id.text_reward_detail_body).text = reward.description
-        root.findViewById<TextView>(R.id.text_reward_detail_highlight).text = reward.highlight
         root.findViewById<TextView>(R.id.text_reward_detail_status).apply {
             text = getString(appearance.labelRes)
             setBackgroundResource(appearance.backgroundRes)
@@ -74,8 +72,6 @@ class RewardDetailsFragment : BaseFragment(R.layout.fragment_reward_details) {
             } else {
                 getString(R.string.child_reward_request_ready_note)
             }
-        root.findViewById<TextView>(R.id.text_reward_not_enough_points).isVisible =
-            details.pointsBalance < reward.cost && !isRequested
         root.findViewById<MaterialButton>(R.id.button_request_reward).apply {
             isEnabled = !isRequested
             text = getString(

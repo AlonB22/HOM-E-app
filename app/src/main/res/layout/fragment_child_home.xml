@@ -25,8 +25,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="start"
                     android:text="@string/child_home_points_label"
                     android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
 
@@ -49,19 +50,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/stack_spacing"
+                    android:layoutDirection="ltr"
                     android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/button_open_my_chores"
-                        style="@style/Widget.HOME_App.Button.Primary"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/action_open_my_chores" />
-
-                    <Space
-                        android:layout_width="@dimen/stack_spacing_small"
-                        android:layout_height="1dp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/button_open_rewards_store"
@@ -70,6 +60,18 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/action_open_rewards_store" />
+
+                    <Space
+                        android:layout_width="@dimen/stack_spacing_small"
+                        android:layout_height="1dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/button_open_my_chores"
+                        style="@style/Widget.HOME_App.Button.Primary"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/action_open_my_chores" />
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -87,8 +89,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="start"
                     android:text="@string/child_home_priority_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
@@ -114,8 +117,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="start"
                     android:text="@string/child_home_waiting_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
@@ -157,8 +161,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="start"
                     android:text="@string/child_home_rewards_preview_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 

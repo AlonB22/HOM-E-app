@@ -176,7 +176,7 @@
     <string name="action_approve">Approve</string>
     <string name="action_decline">Decline</string>
     <string name="action_open_profile">Open Profile</string>
-    <string name="action_open_my_chores">Open My Chores</string>
+    <string name="action_open_my_chores">Open Chores</string>
     <string name="action_open_rewards_store">Open Rewards</string>
     <string name="action_view_chore_details">View Chore Details</string>
     <string name="action_view_reward_details">View Reward Details</string>

@@ -2,7 +2,6 @@ package com.example.hom_e_app.feature.child.chores
 
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.example.hom_e_app.R
 import com.example.hom_e_app.core.auth.SessionManager
@@ -62,7 +61,6 @@ class ChoreDetailsFragment : BaseFragment(R.layout.fragment_chore_details) {
         root.findViewById<TextView>(R.id.text_chore_detail_points).text =
             getString(R.string.label_points_value, chore.points)
         root.findViewById<TextView>(R.id.text_chore_detail_body).text = chore.description
-        root.findViewById<TextView>(R.id.text_chore_detail_focus).text = chore.focus
         root.findViewById<TextView>(R.id.text_chore_review_note).text =
             if (isWaiting) {
                 getString(R.string.child_chore_review_waiting)
@@ -82,7 +80,6 @@ class ChoreDetailsFragment : BaseFragment(R.layout.fragment_chore_details) {
                 if (isWaiting) R.string.action_chore_submitted else R.string.action_submit_chore
             )
         }
-        root.findViewById<TextView>(R.id.text_chore_submitted_hint).isVisible = isWaiting
     }
 
     private fun choreStatusAppearance(status: ChoreStatus): ChildStatusAppearance = when (status) {

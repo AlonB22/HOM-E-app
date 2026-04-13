@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:layoutDirection="ltr"
             android:orientation="horizontal">
 
             <TextView
@@ -28,6 +29,7 @@
                 android:id="@+id/text_child_chore_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:paddingHorizontal="@dimen/chip_horizontal_padding"
                 android:paddingVertical="@dimen/chip_vertical_padding"
                 android:textAppearance="@style/TextAppearance.HOME_App.Badge" />

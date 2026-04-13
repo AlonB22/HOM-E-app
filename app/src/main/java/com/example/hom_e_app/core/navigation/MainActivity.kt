@@ -53,6 +53,15 @@ class MainActivity : AppCompatActivity() {
         R.id.createEditRewardFragment
     )
 
+    private val childSecondaryBackTitleDestinations = setOf(
+        R.id.choreDetailsFragment,
+        R.id.rewardDetailsFragment
+    )
+
+    private val authSecondaryBackTitleDestinations = setOf(
+        R.id.registerJoinFamilyFragment
+    )
+
     private var currentBottomMenuRes: Int? = null
     private var toolbarBackTitleView: View? = null
 
@@ -104,7 +113,9 @@ class MainActivity : AppCompatActivity() {
                     bottomNavigation.isVisible = false
                 }
 
-                destination.id in parentSecondaryBackTitleDestinations -> {
+                destination.id in parentSecondaryBackTitleDestinations ||
+                    destination.id in childSecondaryBackTitleDestinations ||
+                    destination.id in authSecondaryBackTitleDestinations -> {
                     showBackToolbarTitle(destination.label)
                     toolbar.navigationIcon = null
                     bottomNavigation.isVisible = false

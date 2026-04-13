@@ -24,8 +24,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="start"
                     android:text="@string/child_chores_section_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
