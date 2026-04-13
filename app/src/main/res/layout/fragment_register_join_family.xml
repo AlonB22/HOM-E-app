@@ -32,13 +32,6 @@
             android:text="@string/register_join_title"
             android:textAppearance="@style/TextAppearance.HOME_App.ScreenTitle" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing_small"
-            android:text="@string/register_join_body"
-            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
-
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.HOME_App.Card"
             android:layout_width="match_parent"
@@ -56,14 +49,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/register_mode_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
-
-                <TextView
-                    android:id="@+id/text_register_mode_helper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_xsmall"
-                    android:text="@string/register_parent_path_body"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
 
                 <com.google.android.material.button.MaterialButtonToggleGroup
                     android:id="@+id/toggle_register_mode"
@@ -220,14 +205,6 @@
                         android:inputType="textPassword"
                         android:maxLines="1" />
                 </com.google.android.material.textfield.TextInputLayout>
-
-                <TextView
-                    android:id="@+id/text_register_demo_note"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/input_spacing"
-                    android:text="@string/register_demo_note"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
                     android:id="@+id/progress_register"

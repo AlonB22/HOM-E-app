@@ -27,17 +27,17 @@ class LoginFragment : BaseFragment(R.layout.fragment_login) {
         val submitButton = requireView().findViewById<MaterialButton>(R.id.button_login_continue)
         val statusView = requireView().findViewById<TextView>(R.id.text_login_status)
         val progressView = requireView().findViewById<LinearProgressIndicator>(R.id.progress_login)
-        val configNoteView = requireView().findViewById<TextView>(R.id.text_login_demo_note)
 
         when (val availability = SessionManager.firebaseAvailability(requireContext())) {
             FirebaseBootstrap.Availability.Available -> {
-                configNoteView.text = getString(R.string.login_demo_note)
                 submitButton.isEnabled = true
+                statusView.isVisible = false
             }
 
             is FirebaseBootstrap.Availability.Missing -> {
-                configNoteView.text = availability.message
                 submitButton.isEnabled = false
+                statusView.isVisible = true
+                statusView.text = availability.message
             }
         }
 

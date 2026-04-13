@@ -14,28 +14,13 @@
         android:paddingBottom="@dimen/section_spacing">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_parent"
-            android:paddingHorizontal="@dimen/badge_horizontal_padding"
-            android:paddingVertical="@dimen/badge_vertical_padding"
-            android:text="@string/login_badge"
-            android:textAppearance="@style/TextAppearance.HOME_App.Badge"
-            android:textColor="@color/parent_accent" />
-
-        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/stack_spacing"
             android:text="@string/login_title"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.HOME_App.ScreenTitle" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing_small"
-            android:text="@string/login_body"
-            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.HOME_App.Card"
@@ -54,14 +39,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login_form_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
-
-                <TextView
-                    android:id="@+id/text_login_form_helper"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_xsmall"
-                    android:text="@string/login_form_helper"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/input_layout_login_email"
@@ -112,13 +89,6 @@
                     android:textAppearance="@style/TextAppearance.HOME_App.Supporting"
                     android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/text_login_demo_note"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/input_spacing"
-                    android:text="@string/login_demo_note"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_login_continue"
@@ -147,13 +117,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/login_register_prompt"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_small"
-                    android:text="@string/login_register_body"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_join_family"

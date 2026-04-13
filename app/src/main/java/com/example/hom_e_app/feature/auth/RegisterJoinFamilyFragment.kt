@@ -30,7 +30,6 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
     override fun bindScreenActions() {
         bindBack(R.id.button_back_to_login)
 
-        val modeHelper = requireView().findViewById<TextView>(R.id.text_register_mode_helper)
         val scrollView = requireView().findViewById<ScrollView>(R.id.register_scroll_view)
         val parentGroup = requireView().findViewById<LinearLayout>(R.id.group_parent_registration)
         val childGroup = requireView().findViewById<LinearLayout>(R.id.group_child_registration)
@@ -53,17 +52,17 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
         val backButton = requireView().findViewById<MaterialButton>(R.id.button_back_to_login)
         val statusView = requireView().findViewById<TextView>(R.id.text_register_status)
         val progressView = requireView().findViewById<LinearProgressIndicator>(R.id.progress_register)
-        val configNoteView = requireView().findViewById<TextView>(R.id.text_register_demo_note)
 
         when (val availability = SessionManager.firebaseAvailability(requireContext())) {
             FirebaseBootstrap.Availability.Available -> {
-                configNoteView.text = getString(R.string.register_demo_note)
                 submitButton.isEnabled = true
+                statusView.isVisible = false
             }
 
             is FirebaseBootstrap.Availability.Missing -> {
-                configNoteView.text = availability.message
                 submitButton.isEnabled = false
+                statusView.isVisible = true
+                statusView.text = availability.message
             }
         }
 
@@ -86,7 +85,6 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
         modeToggle.check(R.id.button_mode_parent)
         updateRegistrationMode(
             mode = RegistrationMode.PARENT_CREATE_FAMILY,
-            modeHelper = modeHelper,
             parentGroup = parentGroup,
             childGroup = childGroup,
             joinCodeInput = joinCodeInput,
@@ -112,7 +110,6 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
 
             updateRegistrationMode(
                 mode = selectedMode,
-                modeHelper = modeHelper,
                 parentGroup = parentGroup,
                 childGroup = childGroup,
                 joinCodeInput = joinCodeInput,
@@ -197,7 +194,6 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
 
     private fun updateRegistrationMode(
         mode: RegistrationMode,
-        modeHelper: TextView,
         parentGroup: LinearLayout,
         childGroup: LinearLayout,
         joinCodeInput: TextInputEditText,
@@ -206,13 +202,6 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
         val isParentMode = mode == RegistrationMode.PARENT_CREATE_FAMILY
         parentGroup.visibility = if (isParentMode) View.VISIBLE else View.GONE
         childGroup.visibility = if (isParentMode) View.GONE else View.VISIBLE
-        modeHelper.text = getString(
-            if (isParentMode) {
-                R.string.register_parent_path_body
-            } else {
-                R.string.register_child_path_body
-            }
-        )
         joinCodeInput.inputType = if (isParentMode) {
             InputType.TYPE_CLASS_TEXT
         } else {

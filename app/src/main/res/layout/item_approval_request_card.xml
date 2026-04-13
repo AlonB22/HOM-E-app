@@ -15,6 +15,7 @@
             android:id="@+id/text_approval_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="end"
             android:background="@drawable/bg_status_attention"
             android:paddingHorizontal="@dimen/chip_horizontal_padding"
             android:paddingVertical="@dimen/chip_vertical_padding"

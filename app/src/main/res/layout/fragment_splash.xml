@@ -12,15 +12,7 @@
         android:paddingHorizontal="@dimen/screen_horizontal_padding"
         android:paddingVertical="@dimen/section_spacing_large">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_parent"
-            android:paddingHorizontal="@dimen/badge_horizontal_padding"
-            android:paddingVertical="@dimen/badge_vertical_padding"
-            android:text="@string/label_family_organizer"
-            android:textAppearance="@style/TextAppearance.HOME_App.Badge"
-            android:textColor="@color/parent_accent" />
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -29,14 +21,6 @@
             android:text="@string/app_name"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.HOME_App.HeroTitle" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing"
-            android:text="@string/splash_message"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.HOME_App.Card"
@@ -50,17 +34,15 @@
                 android:orientation="vertical"
                 android:padding="@dimen/card_padding">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/splash_card_title"
-                    android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
+
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_small"
-                    android:text="@string/splash_card_body"
+                    android:layout_marginTop="0dp"
+                    android:text="make your family chores fun!"
+                    android:textAlignment="center"
+                    android:textSize="20dp"
                     android:textAppearance="@style/TextAppearance.HOME_App.Body" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator

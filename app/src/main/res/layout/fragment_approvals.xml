@@ -11,24 +11,12 @@
         android:paddingTop="@dimen/section_spacing"
         android:paddingBottom="@dimen/section_spacing_large">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/parent_approvals_intro"
-            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing_small"
-            android:text="@string/helper_approvals_chore"
-            android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/section_spacing"
+            android:layout_marginTop="@dimen/stack_spacing"
             android:gravity="center_vertical"
+            android:layoutDirection="ltr"
             android:orientation="horizontal">
 
             <TextView
@@ -42,6 +30,7 @@
                 android:id="@+id/text_chore_pending_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:background="@drawable/bg_status_attention"
                 android:paddingHorizontal="@dimen/chip_horizontal_padding"
                 android:paddingVertical="@dimen/chip_vertical_padding"
@@ -65,18 +54,12 @@
             android:textAppearance="@style/TextAppearance.HOME_App.Supporting"
             android:visibility="gone" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/section_spacing"
-            android:text="@string/helper_approvals_reward"
-            android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing"
+            android:layout_marginTop="@dimen/section_spacing"
             android:gravity="center_vertical"
+            android:layoutDirection="ltr"
             android:orientation="horizontal">
 
             <TextView
@@ -90,6 +73,7 @@
                 android:id="@+id/text_reward_pending_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:background="@drawable/bg_status_attention"
                 android:paddingHorizontal="@dimen/chip_horizontal_padding"
                 android:paddingVertical="@dimen/chip_vertical_padding"

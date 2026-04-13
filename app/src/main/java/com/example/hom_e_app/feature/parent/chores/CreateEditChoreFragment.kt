@@ -48,25 +48,14 @@ class CreateEditChoreFragment : BaseFragment(R.layout.fragment_create_edit_chore
         val childInput = root.findViewById<MaterialAutoCompleteTextView>(R.id.auto_complete_chore_child)
         val pointsLayout = root.findViewById<TextInputLayout>(R.id.input_layout_chore_points)
         val pointsInput = root.findViewById<TextInputEditText>(R.id.edit_text_chore_points)
-        val previewText = root.findViewById<TextView>(R.id.text_chore_preview)
-        val formTitle = root.findViewById<TextView>(R.id.text_chore_form_title)
-        val formMode = root.findViewById<TextView>(R.id.text_chore_form_mode)
-        val formSubtitle = root.findViewById<TextView>(R.id.text_chore_form_subtitle)
         val saveButton = root.findViewById<android.view.View>(R.id.button_save_chore)
 
         val isEditMode = arguments?.getString(ARG_FORM_MODE) == MODE_EDIT
         if (isEditMode) {
-            formTitle.text = getString(R.string.create_edit_chore_edit_title)
-            formMode.text = getString(R.string.create_edit_chore_edit_title)
-            formSubtitle.text = getString(R.string.create_edit_chore_edit_hint)
             titleInput.setText(arguments?.getString(ARG_TITLE).orEmpty())
             descriptionInput.setText(arguments?.getString(ARG_DESCRIPTION).orEmpty())
             childInput.setText(arguments?.getString(ARG_CHILD_NAME).orEmpty(), false)
             pointsInput.setText(arguments?.getInt(ARG_POINTS)?.takeIf { it > 0 }?.toString().orEmpty())
-        } else {
-            formTitle.text = getString(R.string.create_edit_chore_create_title)
-            formMode.text = getString(R.string.create_edit_chore_create_title)
-            formSubtitle.text = getString(R.string.create_edit_chore_create_hint)
         }
 
         titleInput.doAfterTextChanged { titleLayout.error = null }
@@ -137,8 +126,6 @@ class CreateEditChoreFragment : BaseFragment(R.layout.fragment_create_edit_chore
             }
 
             if (!isValid || selectedChild == null) return@setOnClickListener
-
-            previewText.text = getString(R.string.message_chore_preview, title, selectedChild.displayName, points)
 
             val session = SessionManager.currentSession ?: return@setOnClickListener
             val draft = ParentChoreDraft(

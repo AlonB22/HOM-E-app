@@ -11,23 +11,6 @@
         android:paddingTop="@dimen/section_spacing"
         android:paddingBottom="@dimen/section_spacing_large">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_child"
-            android:paddingHorizontal="@dimen/badge_horizontal_padding"
-            android:paddingVertical="@dimen/badge_vertical_padding"
-            android:text="@string/label_child_view"
-            android:textAppearance="@style/TextAppearance.HOME_App.Badge"
-            android:textColor="@color/child_accent" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing"
-            android:text="@string/child_home_summary"
-            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
-
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.HOME_App.Card"
             android:layout_width="match_parent"
@@ -109,13 +92,6 @@
                     android:text="@string/child_home_priority_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_small"
-                    android:text="@string/child_home_priority_body"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
-
                 <LinearLayout
                     android:id="@+id/container_priority_chores"
                     android:layout_width="match_parent"
@@ -185,13 +161,6 @@
                     android:layout_height="wrap_content"
                     android:text="@string/child_home_rewards_preview_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_small"
-                    android:text="@string/child_home_rewards_preview_body"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
 
                 <LinearLayout
                     android:id="@+id/container_reward_preview"

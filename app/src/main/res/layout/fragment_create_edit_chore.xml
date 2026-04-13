@@ -11,64 +11,6 @@
         android:paddingTop="@dimen/section_spacing"
         android:paddingBottom="@dimen/section_spacing_large">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_parent"
-            android:paddingHorizontal="@dimen/badge_horizontal_padding"
-            android:paddingVertical="@dimen/badge_vertical_padding"
-            android:text="@string/label_parent_view"
-            android:textAppearance="@style/TextAppearance.HOME_App.Badge"
-            android:textColor="@color/parent_accent" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing"
-            android:text="@string/create_edit_chore_body"
-            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
-
-        <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.HOME_App.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/section_spacing">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/card_padding_large">
-
-                <TextView
-                    android:id="@+id/text_chore_form_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_edit_chore_create_title"
-                    android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
-
-                <TextView
-                    android:id="@+id/text_chore_form_mode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_small"
-                    android:background="@drawable/bg_status_neutral"
-                    android:paddingHorizontal="@dimen/chip_horizontal_padding"
-                    android:paddingVertical="@dimen/chip_vertical_padding"
-                    android:text="@string/create_edit_chore_create_title"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Badge"
-                    android:textColor="@color/status_neutral_text" />
-
-                <TextView
-                    android:id="@+id/text_chore_form_subtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing"
-                    android:text="@string/create_edit_chore_create_hint"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.HOME_App.Card"
             android:layout_width="match_parent"
@@ -154,41 +96,6 @@
                         android:inputType="number" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_xsmall"
-                    android:text="@string/helper_chore_points"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_chore_preview"
-            style="@style/Widget.HOME_App.Card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/card_padding_large">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_demo_preview"
-                    android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
-
-                <TextView
-                    android:id="@+id/text_chore_preview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/stack_spacing_small"
-                    android:text="@string/label_preview_pending"
-                    android:textAppearance="@style/TextAppearance.HOME_App.Supporting" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

@@ -42,25 +42,15 @@ class CreateEditRewardFragment : BaseFragment(R.layout.fragment_create_edit_rewa
         val pointsLayout = root.findViewById<TextInputLayout>(R.id.input_layout_reward_points)
         val pointsInput = root.findViewById<TextInputEditText>(R.id.edit_text_reward_points)
         val activeSwitch = root.findViewById<MaterialSwitch>(R.id.switch_reward_active)
-        val previewText = root.findViewById<TextView>(R.id.text_reward_preview)
-        val formTitle = root.findViewById<TextView>(R.id.text_reward_form_title)
-        val formMode = root.findViewById<TextView>(R.id.text_reward_form_mode)
-        val formSubtitle = root.findViewById<TextView>(R.id.text_reward_form_subtitle)
         val saveButton = root.findViewById<android.view.View>(R.id.button_save_reward)
 
         val isEditMode = arguments?.getString(ARG_FORM_MODE) == MODE_EDIT
         if (isEditMode) {
-            formTitle.text = getString(R.string.create_edit_reward_edit_title)
-            formMode.text = getString(R.string.create_edit_reward_edit_title)
-            formSubtitle.text = getString(R.string.create_edit_reward_edit_hint)
             titleInput.setText(arguments?.getString(ARG_TITLE).orEmpty())
             descriptionInput.setText(arguments?.getString(ARG_DESCRIPTION).orEmpty())
             pointsInput.setText(arguments?.getInt(ARG_POINTS)?.takeIf { it > 0 }?.toString().orEmpty())
             activeSwitch.isChecked = arguments?.getBoolean(ARG_IS_ACTIVE) == true
         } else {
-            formTitle.text = getString(R.string.create_edit_reward_create_title)
-            formMode.text = getString(R.string.create_edit_reward_create_title)
-            formSubtitle.text = getString(R.string.create_edit_reward_create_hint)
             activeSwitch.isChecked = true
         }
 
@@ -102,13 +92,6 @@ class CreateEditRewardFragment : BaseFragment(R.layout.fragment_create_edit_rewa
             }
 
             if (!isValid) return@setOnClickListener
-
-            val availability = if (activeSwitch.isChecked) {
-                getString(R.string.label_status_active)
-            } else {
-                getString(R.string.label_status_inactive)
-            }
-            previewText.text = getString(R.string.message_reward_preview, title, points, availability)
 
             val session = SessionManager.currentSession ?: return@setOnClickListener
             val draft = ParentRewardDraft(

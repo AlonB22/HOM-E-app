@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_toolbar_back_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp">
+
+    <ImageView
+        android:id="@+id/image_toolbar_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:contentDescription="@string/action_back" />
+
+    <TextView
+        android:id="@+id/text_toolbar_back_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textAppearance="@style/TextAppearance.HOME_App.ToolbarTitle" />
+</LinearLayout>

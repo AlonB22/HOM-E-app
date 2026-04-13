@@ -28,7 +28,7 @@
     <string name="splash_status_checking">Checking your session…</string>
     <string name="splash_status_retry">Session restore failed. Fix the issue and try again.</string>
     <string name="login_badge">Shared sign-in</string>
-    <string name="login_title">Welcome back</string>
+    <string name="login_title">Welcome To HOM-E</string>
     <string name="login_body">Use one shared login form for both family roles. After sign-in, Firestore family membership decides which shell opens.</string>
     <string name="login_form_title">Sign in to your family</string>
     <string name="login_form_helper">Parents and children use the same credentials form. Role and family routing come from Firestore after authentication.</string>
@@ -51,6 +51,7 @@
     <string name="register_status_parent_loading">Creating the parent account…</string>
     <string name="register_status_child_loading">Joining the family…</string>
     <string name="parent_home_summary">Use the parent dashboard to scan the family workload, review approvals, and jump straight into chore or reward maintenance.</string>
+    <string name="parent_home_family_title">%1$s family</string>
     <string name="parent_home_overview_body">Keep today moving: three chores are still in progress, two requests need approval, and one reward is currently paused.</string>
     <string name="parent_home_overview_live">%1$d chores still need follow-up, %2$d approvals are waiting, and %3$d rewards are active right now.</string>
     <string name="parent_home_focus_title">Needs attention today</string>
@@ -134,7 +135,7 @@
     <string name="child_reward_requested_note">This reward has already been requested and is now waiting for parent review.</string>
     <string name="child_reward_not_enough_points">You can still request this reward, but a parent cannot approve it until the points balance is high enough.</string>
     <string name="profile_body">Profile keeps the child account screen small and safe: who is signed in, which family they belong to, and sign out.</string>
-    <string name="profile_card_title">What you can do here</string>
+    <string name="profile_card_title">Have a great day! </string>
     <string name="profile_card_body">Child mode stays read-only except for submitting chore completion and requesting rewards.</string>
     <string name="child_profile_badge">Child account</string>
     <string name="section_today_overview">Overview card</string>
@@ -157,6 +158,7 @@
     <string name="action_join_existing_family">Child joins with code</string>
     <string name="action_create_account">Create Account</string>
     <string name="action_back_to_login">Back to Login</string>
+    <string name="action_back">Back</string>
     <string name="action_try_again">Try Again</string>
     <string name="action_review_approvals">Review Approvals</string>
     <string name="action_open_chores">Open Chores</string>
@@ -212,7 +214,7 @@
     <string name="label_status_new_reward">New reward</string>
     <string name="label_status_active">Active</string>
     <string name="label_status_inactive">Inactive</string>
-    <string name="label_status_awaiting_parent">Awaiting parent</string>
+    <string name="label_status_awaiting_parent">Awaiting approval</string>
     <string name="label_status_approved_local">Approved locally</string>
     <string name="label_status_declined_local">Declined locally</string>
     <string name="label_status_approved">Approved</string>

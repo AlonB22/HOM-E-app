@@ -11,11 +11,6 @@
         android:paddingTop="@dimen/section_spacing"
         android:paddingBottom="@dimen/section_spacing_large">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/chore_details_body"
-            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.HOME_App.Card"

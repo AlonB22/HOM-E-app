@@ -12,21 +12,11 @@
         android:paddingBottom="@dimen/section_spacing_large">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_badge_parent"
-            android:paddingHorizontal="@dimen/badge_horizontal_padding"
-            android:paddingVertical="@dimen/badge_vertical_padding"
-            android:text="@string/label_parent_view"
-            android:textAppearance="@style/TextAppearance.HOME_App.Badge"
-            android:textColor="@color/parent_accent" />
-
-        <TextView
+            android:id="@+id/text_parent_family_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/stack_spacing"
-            android:text="@string/parent_home_summary"
-            android:textAppearance="@style/TextAppearance.HOME_App.Body" />
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.HOME_App.ScreenTitle" />
 
         <com.google.android.material.card.MaterialCardView
             style="@style/Widget.HOME_App.Card"
@@ -41,8 +31,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/section_today_overview"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
@@ -174,8 +165,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/parent_home_focus_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
@@ -189,10 +181,11 @@
 
                 <TextView
                     android:id="@+id/text_parent_focus_chip"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/stack_spacing"
                     android:background="@drawable/bg_status_attention"
+                    android:gravity="center"
                     android:paddingHorizontal="@dimen/chip_horizontal_padding"
                     android:paddingVertical="@dimen/chip_vertical_padding"
                     android:text="@string/label_pending_two"
@@ -214,8 +207,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/parent_home_family_access_title"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
@@ -291,8 +285,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/section_quick_actions"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 
@@ -362,8 +357,9 @@
                 android:padding="@dimen/card_padding_large">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="@string/section_recent_activity"
                     android:textAppearance="@style/TextAppearance.HOME_App.CardTitle" />
 

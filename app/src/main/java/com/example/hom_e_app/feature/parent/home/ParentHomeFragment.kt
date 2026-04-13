@@ -5,8 +5,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -74,6 +74,9 @@ class ParentHomeFragment : BaseFragment(R.layout.fragment_parent_home) {
         val familyName = session?.familyName?.takeIf { it.isNotBlank() }
             ?: getString(R.string.parent_home_family_name_fallback)
         val joinCode = session?.joinCode?.takeIf { it.isNotBlank() }
+
+        root.findViewById<TextView>(R.id.text_parent_family_title).text =
+            getString(R.string.parent_home_family_title, familyName)
 
         root.findViewById<TextView>(R.id.text_parent_family_name).text =
             getString(R.string.parent_home_family_name_label, familyName)
