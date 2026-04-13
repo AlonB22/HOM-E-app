@@ -290,23 +290,7 @@ At this stage the app already includes:
 - no advanced analytics or notifications
 - duplicate child display names can still create UX ambiguity in selection/dropdowns
 - the package name is still `com.example.hom_e_app`
-  - this is acceptable for coursework, but should be renamed for a production-quality release
 
-## Suggested Demo Flow
-
-For a classroom presentation or portfolio demo:
-
-1. Register a parent account
-2. Show the parent home screen and join code
-3. Register a child with that join code
-4. Create a chore as the parent
-5. Create a reward as the parent
-6. Show the child seeing the chore
-7. Submit the chore as the child
-8. Approve it as the parent
-9. Show the updated points balance on the child side
-10. Request a reward as the child
-11. Approve or reject it as the parent
 
 ## Repository Notes
 
@@ -324,7 +308,9 @@ Files intentionally ignored from Git:
 - better profile/account experience
 - optional recurring chore support
 - more robust production deployment tooling
+- save used rewards
 - screenshots and demo video links in this README
+  
 
 ## Author
 
