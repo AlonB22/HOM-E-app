@@ -97,16 +97,12 @@ service cloud.firestore {
         && get(memberDocPath(memberId)).data.role == 'child';
     }
 
-    function validUserBootstrap(uid, role, familyId, memberId) {
-      let memberAfter = getAfter(memberDocPath(memberId));
-      return memberAfter.data.userId == uid
-        && memberAfter.data.role == role
-        && memberAfter.data.familyId == familyId
-        && (
-          role == 'parent'
-            ? getAfter(familyDocPath(familyId)).data.createdByUid == uid
-            : get(familyDocPath(familyId)).data.joinCode == memberAfter.data.joinCodeUsed
-        );
+    function validUserBootstrap(uid) {
+      return request.resource.data.email is string
+        && request.resource.data.displayName is string
+        && request.resource.data.familyId is string
+        && request.resource.data.memberId is string
+        && validRole(request.resource.data.role);
     }
 
     function validParentMembershipCreate(memberId) {
@@ -300,17 +296,7 @@ service cloud.firestore {
           'createdAt',
           'updatedAt'
         ])
-        && request.resource.data.email is string
-        && request.resource.data.displayName is string
-        && request.resource.data.familyId is string
-        && request.resource.data.memberId is string
-        && validRole(request.resource.data.role)
-        && validUserBootstrap(
-          uid,
-          request.resource.data.role,
-          request.resource.data.familyId,
-          request.resource.data.memberId
-        );
+        && validUserBootstrap(uid);
 
       allow update, delete: if false;
     }

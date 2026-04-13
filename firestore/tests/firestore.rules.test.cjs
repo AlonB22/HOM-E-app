@@ -81,6 +81,114 @@ test("parent can create and edit an open chore for their child", async () => {
   );
 });
 
+test("new parent can bootstrap account, family, and membership in one batch", async () => {
+  const parentUserId = "new-parent-user";
+  const parentMemberId = "new-parent-member";
+  const familyId = "new-family";
+  const db = authedDb(parentUserId);
+  const batch = writeBatch(db);
+
+  batch.set(doc(db, "users", parentUserId), {
+    email: "new-parent@example.com",
+    displayName: "New Parent",
+    role: "parent",
+    familyId,
+    memberId: parentMemberId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  batch.set(doc(db, "families", familyId), {
+    name: "New Family",
+    joinCode: "NEW123",
+    createdByUid: parentUserId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  batch.set(doc(db, "familyMembers", parentMemberId), {
+    userId: parentUserId,
+    familyId,
+    role: "parent",
+    displayName: "New Parent",
+    email: "new-parent@example.com",
+    pointsBalance: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+
+  await assertSucceeds(batch.commit());
+});
+
+test("new child can join an existing family in one batch", async () => {
+  const childUserId = "new-child-user";
+  const childMemberId = "new-child-member";
+  const db = authedDb(childUserId);
+  const batch = writeBatch(db);
+
+  batch.set(doc(db, "users", childUserId), {
+    email: "new-child@example.com",
+    displayName: "New Child",
+    role: "child",
+    familyId: ids.familyA,
+    memberId: childMemberId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  batch.set(doc(db, "familyMembers", childMemberId), {
+    userId: childUserId,
+    familyId: ids.familyA,
+    role: "child",
+    displayName: "New Child",
+    email: "new-child@example.com",
+    pointsBalance: 0,
+    joinCodeUsed: "JOINA1",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+
+  await assertSucceeds(batch.commit());
+});
+
+test("newly registered parent can read back user, membership, and family for session bootstrap", async () => {
+  const parentUserId = "bootstrap-parent-user";
+  const parentMemberId = "bootstrap-parent-member";
+  const familyId = "bootstrap-family";
+  const db = authedDb(parentUserId);
+  const batch = writeBatch(db);
+
+  batch.set(doc(db, "users", parentUserId), {
+    email: "bootstrap-parent@example.com",
+    displayName: "Bootstrap Parent",
+    role: "parent",
+    familyId,
+    memberId: parentMemberId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  batch.set(doc(db, "families", familyId), {
+    name: "Bootstrap Family",
+    joinCode: "BOOT12",
+    createdByUid: parentUserId,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+  batch.set(doc(db, "familyMembers", parentMemberId), {
+    userId: parentUserId,
+    familyId,
+    role: "parent",
+    displayName: "Bootstrap Parent",
+    email: "bootstrap-parent@example.com",
+    pointsBalance: 0,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+
+  await assertSucceeds(batch.commit());
+
+  await assertSucceeds(getDoc(doc(db, "users", parentUserId)));
+  await assertSucceeds(getDoc(doc(db, "familyMembers", parentMemberId)));
+  await assertSucceeds(getDoc(doc(db, "families", familyId)));
+});
+
 test("child can submit an assigned open chore", async () => {
   await seedDoc(`chores/${ids.choreA}`, createOpenChore({
     familyId: ids.familyA,

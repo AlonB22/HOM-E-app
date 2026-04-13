@@ -148,6 +148,7 @@ object SessionManager {
                                 "role" to FamilyRole.PARENT.name.lowercase(Locale.US),
                                 "displayName" to parentName,
                                 "email" to email,
+                                "pointsBalance" to 0,
                                 "createdAt" to FieldValue.serverTimestamp(),
                                 "updatedAt" to FieldValue.serverTimestamp(),
                             )
@@ -233,6 +234,7 @@ object SessionManager {
                                 "role" to FamilyRole.CHILD.name.lowercase(Locale.US),
                                 "displayName" to childName,
                                 "email" to email,
+                                "pointsBalance" to 0,
                                 "joinCodeUsed" to normalizedJoinCode,
                                 "createdAt" to FieldValue.serverTimestamp(),
                                 "updatedAt" to FieldValue.serverTimestamp(),
@@ -279,24 +281,39 @@ object SessionManager {
         onFailure: (Throwable) -> Unit,
     ): Result<FamilySession> {
         return runCatching {
-            val membershipSnapshot = firestore.collection(FAMILY_MEMBERS_COLLECTION)
-                .whereEqualTo("userId", user.uid)
-                .limit(2)
+            val userDocument = firestore.collection(USERS_COLLECTION)
+                .document(user.uid)
                 .get()
                 .await()
 
-            when {
-                membershipSnapshot.isEmpty -> {
-                    error("No family membership exists for this account.")
-                }
-
-                membershipSnapshot.documents.size > 1 -> {
-                    error("This account is linked to multiple families. Resolve the duplicate membership before continuing.")
-                }
+            if (!userDocument.exists()) {
+                error("No profile exists for this account.")
             }
 
-            val membershipDocument = membershipSnapshot.documents.first()
-            val familyId = membershipDocument.getString("familyId").orEmpty()
+            val memberId = userDocument.getString("memberId")
+                ?.takeIf { it.isNotBlank() }
+                ?: error("This account is missing its family membership link.")
+            val familyId = userDocument.getString("familyId")
+                ?.takeIf { it.isNotBlank() }
+                ?: error("This account is missing its family link.")
+
+            val membershipDocument = firestore.collection(FAMILY_MEMBERS_COLLECTION)
+                .document(memberId)
+                .get()
+                .await()
+
+            if (!membershipDocument.exists()) {
+                error("No family membership exists for this account.")
+            }
+
+            if (membershipDocument.getString("userId") != user.uid) {
+                error("This account is linked to the wrong membership record.")
+            }
+
+            if (membershipDocument.getString("familyId") != familyId) {
+                error("This account has inconsistent family data.")
+            }
+
             val role = membershipDocument.getString("role").toFamilyRole()
             val displayName = membershipDocument.getString("displayName")
                 ?.takeIf { it.isNotBlank() }
@@ -310,7 +327,7 @@ object SessionManager {
 
             FamilySession(
                 uid = user.uid,
-                memberId = membershipDocument.id,
+                memberId = memberId,
                 familyId = familyId,
                 role = role,
                 displayName = displayName,

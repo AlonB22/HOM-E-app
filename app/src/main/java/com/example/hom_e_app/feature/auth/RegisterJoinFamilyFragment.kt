@@ -1,8 +1,11 @@
 package com.example.hom_e_app.feature.auth
 
+import android.graphics.Rect
 import android.text.InputFilter
 import android.text.InputType
+import android.view.KeyEvent
 import android.view.View
+import android.widget.ScrollView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.isVisible
@@ -28,6 +31,7 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
         bindBack(R.id.button_back_to_login)
 
         val modeHelper = requireView().findViewById<TextView>(R.id.text_register_mode_helper)
+        val scrollView = requireView().findViewById<ScrollView>(R.id.register_scroll_view)
         val parentGroup = requireView().findViewById<LinearLayout>(R.id.group_parent_registration)
         val childGroup = requireView().findViewById<LinearLayout>(R.id.group_child_registration)
         val modeToggle = requireView().findViewById<MaterialButtonToggleGroup>(R.id.toggle_register_mode)
@@ -68,13 +72,25 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
             InputFilter.AllCaps()
         )
 
+        configureFieldNavigation(
+            scrollView = scrollView,
+            parentNameInput = parentNameInput,
+            familyNameInput = familyNameInput,
+            childNameInput = childNameInput,
+            joinCodeInput = joinCodeInput,
+            emailInput = emailInput,
+            passwordInput = passwordInput,
+            submitButton = submitButton
+        )
+
         modeToggle.check(R.id.button_mode_parent)
         updateRegistrationMode(
             mode = RegistrationMode.PARENT_CREATE_FAMILY,
             modeHelper = modeHelper,
             parentGroup = parentGroup,
             childGroup = childGroup,
-            joinCodeInput = joinCodeInput
+            joinCodeInput = joinCodeInput,
+            emailInput = emailInput
         )
 
         modeToggle.addOnButtonCheckedListener { _, checkedId, isChecked ->
@@ -99,7 +115,8 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
                 modeHelper = modeHelper,
                 parentGroup = parentGroup,
                 childGroup = childGroup,
-                joinCodeInput = joinCodeInput
+                joinCodeInput = joinCodeInput,
+                emailInput = emailInput
             )
         }
 
@@ -184,6 +201,7 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
         parentGroup: LinearLayout,
         childGroup: LinearLayout,
         joinCodeInput: TextInputEditText,
+        emailInput: TextInputEditText,
     ) {
         val isParentMode = mode == RegistrationMode.PARENT_CREATE_FAMILY
         parentGroup.visibility = if (isParentMode) View.VISIBLE else View.GONE
@@ -199,6 +217,80 @@ class RegisterJoinFamilyFragment : BaseFragment(R.layout.fragment_register_join_
             InputType.TYPE_CLASS_TEXT
         } else {
             InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
+        }
+
+        emailInput.nextFocusUpId = if (isParentMode) {
+            R.id.input_family_name
+        } else {
+            R.id.input_join_code
+        }
+    }
+
+    private fun configureFieldNavigation(
+        scrollView: ScrollView,
+        parentNameInput: TextInputEditText,
+        familyNameInput: TextInputEditText,
+        childNameInput: TextInputEditText,
+        joinCodeInput: TextInputEditText,
+        emailInput: TextInputEditText,
+        passwordInput: TextInputEditText,
+        submitButton: MaterialButton,
+    ) {
+        val orderedInputs = listOf(
+            parentNameInput,
+            familyNameInput,
+            childNameInput,
+            joinCodeInput,
+            emailInput,
+            passwordInput
+        )
+
+        orderedInputs.forEach { input ->
+            input.setOnFocusChangeListener { focusedView, hasFocus ->
+                if (hasFocus) {
+                    scrollFieldIntoView(scrollView, focusedView)
+                }
+            }
+        }
+
+        setNextFieldAction(parentNameInput, familyNameInput)
+        setNextFieldAction(familyNameInput, emailInput)
+        setNextFieldAction(childNameInput, joinCodeInput)
+        setNextFieldAction(joinCodeInput, emailInput)
+        setNextFieldAction(emailInput, passwordInput)
+
+        passwordInput.setOnEditorActionListener { _, actionId, event ->
+            val isSubmitAction = actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            if (isSubmitAction) {
+                submitButton.performClick()
+            }
+            isSubmitAction
+        }
+    }
+
+    private fun setNextFieldAction(
+        currentInput: TextInputEditText,
+        nextInput: TextInputEditText,
+    ) {
+        currentInput.setOnEditorActionListener { _, actionId, event ->
+            val isNextAction = actionId == android.view.inputmethod.EditorInfo.IME_ACTION_NEXT ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            if (isNextAction) {
+                nextInput.requestFocus()
+            }
+            isNextAction
+        }
+    }
+
+    private fun scrollFieldIntoView(scrollView: ScrollView, targetView: View) {
+        val targetRect = Rect()
+        targetView.getDrawingRect(targetRect)
+        scrollView.offsetDescendantRectToMyCoords(targetView, targetRect)
+
+        scrollView.post {
+            val topPadding = resources.getDimensionPixelSize(R.dimen.stack_spacing)
+            scrollView.smoothScrollTo(0, (targetRect.top - topPadding).coerceAtLeast(0))
         }
     }
 

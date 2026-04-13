@@ -79,6 +79,16 @@ class CreateEditChoreFragment : BaseFragment(R.layout.fragment_create_edit_chore
         childInput.setOnItemClickListener { _, _, position, _ ->
             selectedChildId = childOptions.getOrNull(position)?.id
         }
+        childInput.setOnClickListener {
+            if (childOptions.isNotEmpty()) {
+                childInput.showDropDown()
+            }
+        }
+        childLayout.setEndIconOnClickListener {
+            if (childOptions.isNotEmpty()) {
+                childInput.showDropDown()
+            }
+        }
 
         saveButton.setOnClickListener {
             if (isSaving) return@setOnClickListener
@@ -190,6 +200,7 @@ class CreateEditChoreFragment : BaseFragment(R.layout.fragment_create_edit_chore
                             options.map(FamilyChildOption::displayName)
                         )
                     )
+                    childInput.threshold = 0
                     val currentName = childInput.text?.toString()?.trim().orEmpty()
                     selectedChildId = resolveUniqueChildId(currentName)
                 }

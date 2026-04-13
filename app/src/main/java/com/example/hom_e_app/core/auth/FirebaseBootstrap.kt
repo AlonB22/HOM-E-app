@@ -15,6 +15,10 @@ object FirebaseBootstrap {
     fun availability(context: Context): Availability {
         FirebaseApp.getApps(context).firstOrNull()?.let { return Availability.Available }
 
+        runCatching { FirebaseApp.initializeApp(context) }
+            .getOrNull()
+            ?.let { return Availability.Available }
+
         val options = runtimeOptions(context)
         return if (options == null) {
             Availability.Missing(context.getString(R.string.firebase_setup_required_message))
