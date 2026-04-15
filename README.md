@@ -60,8 +60,6 @@ The project was designed around these constraints:
 
 ## Product Scope
 
-This MVP intentionally stays narrow.
-
 ### Included
 
 - one parent account per family
